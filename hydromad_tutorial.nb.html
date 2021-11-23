@@ -215,6 +215,7 @@ pre code {
 
 
 <!-- rnb-text-begin -->
+<p>Load the required package and Cotter dam data.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShoeWRyb21hZClcbmBgYCJ9 -->
@@ -245,12 +246,38 @@ Registered S3 method overwritten by &#39;data.table&#39;:
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Cmd+Option+I</em>.</p>
-<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Cmd+Shift+K</em> to preview the HTML file).</p>
-<p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
+<p>We can plot the raw daily time series using <code>xyplot</code>:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueHlwbG90KENvdHRlcilcbmBgYCJ9 -->
+<pre class="r"><code>xyplot(Cotter)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We can also plot the time series aggregated to a monthly time step:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9udGhseVBRRSA8LSBhZ2dyZWdhdGUoQ290dGVyLCBhcy55ZWFybW9uLCBtZWFuKVxueHlwbG90KG1vbnRobHlQUUUsIHNjcmVlbnMgPSBjKFwiU3RyZWFtZmxvdyAobW0vZGF5KVwiLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwiQXJlYWwgcmFpbiAobW0vZGF5KVwiLCBcIlRlbXBlcmF0dXJlIChkZWcuIEMpXCIpLFxuICAgICAgIHhsYWIgPSBOVUxMKVxuYGBgIn0= -->
+<pre class="r"><code>monthlyPQE &lt;- aggregate(Cotter, as.yearmon, mean)
+xyplot(monthlyPQE, screens = c(&quot;Streamflow (mm/day)&quot;,
+                               &quot;Areal rain (mm/day)&quot;, &quot;Temperature (deg. C)&quot;),
+       xlab = NULL)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>One measure that is of key interest in hydrology is the <em>runoff ratio</em>, the proportion of the rainfall which flows out of the catchment. In a simple case this is just <code>sum(Q) / sum(P)</code>, but as we have missing values, we should only compare the common observations:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub2sgPC0gY29tcGxldGUuY2FzZXMoQ290dGVyWywgMToyXSlcbndpdGgoQ290dGVyLCBzdW0oUVtva10pL3N1bShQW29rXSkpXG5gYGAifQ== -->
+<pre class="r"><code>ok &lt;- complete.cases(Cotter[, 1:2])
+with(Cotter, sum(Q[ok])/sum(P[ok]))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>This figure is within the range we would expect, so is looks like we probably have the right data series and units.</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSHlkcm9tYWQgVHV0b3JpYWwiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCgoKYGBge3J9CmxpYnJhcnkoaHlkcm9tYWQpCmRhdGEoQ290dGVyKQpgYGAKCkFkZCBhIG5ldyBjaHVuayBieSBjbGlja2luZyB0aGUgKkluc2VydCBDaHVuayogYnV0dG9uIG9uIHRoZSB0b29sYmFyIG9yIGJ5IHByZXNzaW5nICpDbWQrT3B0aW9uK0kqLgoKV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDbWQrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4gCgpUaGUgcHJldmlldyBzaG93cyB5b3UgYSByZW5kZXJlZCBIVE1MIGNvcHkgb2YgdGhlIGNvbnRlbnRzIG9mIHRoZSBlZGl0b3IuIENvbnNlcXVlbnRseSwgdW5saWtlICpLbml0KiwgKlByZXZpZXcqIGRvZXMgbm90IHJ1biBhbnkgUiBjb2RlIGNodW5rcy4gSW5zdGVhZCwgdGhlIG91dHB1dCBvZiB0aGUgY2h1bmsgd2hlbiBpdCB3YXMgbGFzdCBydW4gaW4gdGhlIGVkaXRvciBpcyBkaXNwbGF5ZWQuCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSHlkcm9tYWQgVHV0b3JpYWwiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KCkxvYWQgdGhlIHJlcXVpcmVkIHBhY2thZ2UgYW5kIENvdHRlciBkYW0gZGF0YS4KCmBgYHtyfQpsaWJyYXJ5KGh5ZHJvbWFkKQpkYXRhKENvdHRlcikKYGBgCgpXZSBjYW4gcGxvdCB0aGUgcmF3IGRhaWx5IHRpbWUgc2VyaWVzIHVzaW5nIGB4eXBsb3RgOgpgYGB7cn0KeHlwbG90KENvdHRlcikKYGBgCldlIGNhbiBhbHNvIHBsb3QgdGhlIHRpbWUgc2VyaWVzIGFnZ3JlZ2F0ZWQgdG8gYSBtb250aGx5IHRpbWUgc3RlcDoKYGBge3J9Cm1vbnRobHlQUUUgPC0gYWdncmVnYXRlKENvdHRlciwgYXMueWVhcm1vbiwgbWVhbikKeHlwbG90KG1vbnRobHlQUUUsIHNjcmVlbnMgPSBjKCJTdHJlYW1mbG93IChtbS9kYXkpIiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJBcmVhbCByYWluIChtbS9kYXkpIiwgIlRlbXBlcmF0dXJlIChkZWcuIEMpIiksCiAgICAgICB4bGFiID0gTlVMTCkKYGBgCk9uZSBtZWFzdXJlIHRoYXQgaXMgb2Yga2V5IGludGVyZXN0IGluIGh5ZHJvbG9neSBpcyB0aGUgX3J1bm9mZiByYXRpb18sIHRoZSAKcHJvcG9ydGlvbiBvZiB0aGUgcmFpbmZhbGwgd2hpY2ggZmxvd3Mgb3V0IG9mIHRoZSBjYXRjaG1lbnQuIEluIGEgc2ltcGxlIGNhc2UgdGhpcyBpcyBqdXN0IGBzdW0oUSkgLyBzdW0oUClgLCBidXQgYXMgd2UgaGF2ZSBtaXNzaW5nIHZhbHVlcywgd2Ugc2hvdWxkIG9ubHkgY29tcGFyZQp0aGUgY29tbW9uIG9ic2VydmF0aW9uczoKYGBge3J9Cm9rIDwtIGNvbXBsZXRlLmNhc2VzKENvdHRlclssIDE6Ml0pCndpdGgoQ290dGVyLCBzdW0oUVtva10pL3N1bShQW29rXSkpCmBgYApUaGlzIGZpZ3VyZSBpcyB3aXRoaW4gdGhlIHJhbmdlIHdlIHdvdWxkIGV4cGVjdCwgc28gaXMgbG9va3MgbGlrZSB3ZQpwcm9iYWJseSBoYXZlIHRoZSByaWdodCBkYXRhIHNlcmllcyBhbmQgdW5pdHMuCgoKCg==</div>
 
 
 
